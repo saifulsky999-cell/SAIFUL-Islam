@@ -1,0 +1,4510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEGi University & Colleges | Academic Management System</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a3a8f;
+            --primary-dark: #142a6e;
+            --primary-light: #2a56d6;
+            --secondary: #8b4513;
+            --accent: #c19a6b;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --light-gray: #e9ecef;
+            --dark: #212529;
+            --dark-gray: #343a40;
+            --gold: #d4af37;
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.15);
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(26, 58, 143, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(26, 58, 143, 0.6);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.2) 50%, 
+                rgba(255,255,255,0) 100%);
+            background-size: 200% auto;
+            animation: shimmer 3s infinite linear;
+        }
+
+        .animate-bounce {
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        /* ===== AI CHATBOT ===== */
+        .ai-chatbot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .chatbot-toggle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl);
+            border: 3px solid white;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbot-toggle::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            opacity: 0.3;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+        .chatbot-container {
+            position: absolute;
+            bottom: 90px;
+            right: 0;
+            width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+        }
+
+        .chatbot-container.active {
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: white;
+            margin: 0;
+        }
+
+        .chatbot-header h3::after {
+            display: none;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .chatbot-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 400px;
+            background: var(--light);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message.bot .avatar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .message.user .avatar {
+            background: linear-gradient(135deg, var(--secondary), #a0522d);
+            color: white;
+        }
+
+        .message .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            max-width: 280px;
+        }
+
+        .message.bot .message-content {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border-radius: 12px 12px 12px 4px;
+        }
+
+        .message.user .message-content {
+            background: var(--light);
+            border-radius: 12px 12px 4px 12px;
+            margin-left: auto;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message.user .avatar {
+            order: 1;
+        }
+
+        .chatbot-input {
+            padding: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .chatbot-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+        }
+
+        .chatbot-input button {
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .chatbot-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-questions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-question {
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+        }
+
+        .quick-question:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-accent { color: var(--accent); }
+        .text-gold { color: var(--gold); }
+        .text-success { color: var(--success); }
+        .text-info { color: var(--info); }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #d4b483);
+            color: white;
+            box-shadow: var(--shadow-gold);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-large {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-main {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .logo-sub {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            margin: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark-gray);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--dark);
+            transition: var(--transition);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ===== HOME PAGE ===== */
+        .home-page {
+            padding: 0;
+        }
+
+        .hero {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(26, 58, 143, 0.1) 0%, rgba(139, 69, 19, 0.05) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 58, 143, 0.05) 0%, transparent 100%);
+            border-radius: 0 0 0 100px;
+            z-index: -1;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(26, 58, 143, 0.1);
+            color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(26, 58, 143, 0.2);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 600px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        .hero-visual {
+            flex: 1;
+            position: relative;
+            padding-left: 4rem;
+        }
+
+        .dashboard-preview {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            transform: perspective(1000px) rotateY(-10deg);
+            animation: float 6s ease-in-out infinite;
+            border: 1px solid var(--light-gray);
+        }
+
+        .preview-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .preview-nav span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .preview-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .preview-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .preview-card {
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .preview-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .badge-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .badge-primary {
+            background: rgba(26, 58, 143, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(26, 58, 143, 0.2);
+        }
+
+        .badge-info {
+            background: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+            border: 1px solid rgba(23, 162, 184, 0.2);
+        }
+
+        .progress-container {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.3) 50%, 
+                rgba(255,255,255,0) 100%);
+            animation: shimmer 2s infinite linear;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .stat-value-sm {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stat-label-sm {
+            font-size: 0.75rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        /* ===== DASHBOARD PAGE ===== */
+        .dashboard-page {
+            padding: 3rem 0;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-content h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-content h2::after {
+            background: var(--accent);
+        }
+
+        .welcome-content p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0;
+        }
+
+        .academic-year {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .academic-year h4 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .progress-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .progress-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-card {
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .progress-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .progress-card h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .progress-large {
+            height: 10px;
+        }
+
+        .overall-progress {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .overall-progress h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .percentage {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+            margin-bottom: 2rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border: 1px solid var(--light-gray);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .quick-action-btn:hover i {
+            color: white;
+        }
+
+        .quick-action-btn i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        /* ===== COURSE REGISTRATION PAGE ===== */
+        .registration-page {
+            padding: 3rem 0;
+        }
+
+        .registration-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .registration-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .student-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .student-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .student-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .detail-label {
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .semester-info {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .semester-info h4 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .courses-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .filter-bar {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-gray);
+        }
+
+        .select-box {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .select-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+        }
+
+        .courses-list {
+            display: grid;
+            gap: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+            padding: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-title h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .course-code {
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(26, 58, 143, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .course-status {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .status-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .status-full {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .course-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .detail-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(26, 58, 143, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.875rem;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .prerequisite {
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+        }
+
+        .prerequisite strong {
+            color: var(--dark);
+        }
+
+        .btn-select {
+            padding: 0.625rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-select:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-select:disabled {
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .selected-courses {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+            margin-top: 2rem;
+        }
+
+        .selected-courses h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .selected-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .selected-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .selected-info h5 {
+            margin-bottom: 0.25rem;
+        }
+
+        .selected-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .registration-summary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-total {
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Course History Section */
+        .course-history-section {
+            margin-top: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .history-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 1rem;
+        }
+
+        .history-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+
+        .history-tab:hover {
+            background: var(--light);
+        }
+
+        .history-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .history-info h5 {
+            margin-bottom: 0.25rem;
+        }
+
+        .history-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+        }
+
+        .history-grade {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .grade-a { background: rgba(40, 167, 69, 0.1); color: var(--success); border: 1px solid rgba(40, 167, 69, 0.2); }
+        .grade-b { background: rgba(23, 162, 184, 0.1); color: var(--info); border: 1px solid rgba(23, 162, 184, 0.2); }
+        .grade-c { background: rgba(255, 193, 7, 0.1); color: var(--warning); border: 1px solid rgba(255, 193, 7, 0.2); }
+
+        /* Remaining Courses Section */
+        .remaining-courses-section {
+            margin-top: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .remaining-courses-section h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .session-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .session-header h4 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .session-badge {
+            padding: 0.5rem 1rem;
+            background: var(--warning);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .remaining-courses-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .remaining-course {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .remaining-course-info h5 {
+            margin-bottom: 0.25rem;
+        }
+
+        .remaining-course-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--dark-gray);
+        }
+
+        .remaining-credits {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* ===== DY2 CREDIT TRANSFER PAGE ===== */
+        .dy2-page {
+            padding: 3rem 0;
+        }
+
+        .dy2-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .dy2-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .student-comparison-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .comparison-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 1rem;
+        }
+
+        .comparison-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+
+        .comparison-tab:hover {
+            background: var(--light);
+        }
+
+        .comparison-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .student-details-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .student-details-section h4 {
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .student-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            color: var(--dark);
+        }
+
+        .transfer-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .transfer-summary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .transfer-steps {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .transfer-table {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .transfer-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transfer-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .transfer-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .transfer-table tr:hover {
+            background: var(--light);
+        }
+
+        .status-transfer {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .status-rejected {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .regular-student-progress {
+            margin-top: 2rem;
+        }
+
+        .progress-tracker {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .year-section {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .year-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .year-header h5 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .semester-courses {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .semester-course {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .course-status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .completed { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+        .current { background: rgba(23, 162, 184, 0.1); color: var(--info); }
+        .upcoming { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+
+        /* ===== TIMETABLE PAGE ===== */
+        .timetable-page {
+            padding: 3rem 0;
+        }
+
+        .timetable-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .timetable-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: 15px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .week-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .current-week {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .timetable-grid {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+        }
+
+        .timetable-header-row {
+            display: grid;
+            grid-template-columns: 100px repeat(5, 1fr);
+            background: var(--primary);
+            color: white;
+        }
+
+        .timetable-cell {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timetable-cell:last-child {
+            border-right: none;
+        }
+
+        .timetable-row {
+            display: grid;
+            grid-template-columns: 100px repeat(5, 1fr);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .timetable-row:last-child {
+            border-bottom: none;
+        }
+
+        .time-slot {
+            padding: 1rem;
+            background: var(--light);
+            font-weight: 500;
+            color: var(--dark);
+            border-right: 1px solid var(--light-gray);
+        }
+
+        .class-slot {
+            padding: 1rem;
+            border-right: 1px solid var(--light-gray);
+            min-height: 100px;
+            position: relative;
+        }
+
+        .class-slot:last-child {
+            border-right: none;
+        }
+
+        .class-event {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-event::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .class-code {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-time {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* ===== ADMIN PAGE ===== */
+        .admin-page {
+            padding: 3rem 0;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-gray);
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .admin-sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .admin-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border: 1px solid var(--light-gray);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .admin-menu-item:hover,
+        .admin-menu-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-menu-item:hover i,
+        .admin-menu-item.active i {
+            color: white;
+        }
+
+        .admin-menu-item i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .admin-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-gray);
+        }
+
+        .login-section {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .signup-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .footer-title {
+            font-size: 1.125rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .dashboard-grid,
+            .registration-grid,
+            .dy2-grid,
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .student-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chatbot-container {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: var(--shadow-lg);
+                gap: 1rem;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .nav-link.active::after {
+                display: none;
+            }
+            
+            .filter-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .course-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .chatbot-container {
+                width: 300px;
+                right: -50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero {
+                flex-direction: column;
+                padding: 2rem 0;
+            }
+            
+            .hero-visual {
+                padding-left: 0;
+                margin-top: 3rem;
+                width: 100%;
+            }
+            
+            .dashboard-preview {
+                transform: none;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+            }
+            
+            .preview-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .timetable-header-row,
+            .timetable-row {
+                grid-template-columns: 80px repeat(5, 1fr);
+            }
+            
+            .progress-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .chatbot-container {
+                width: calc(100vw - 60px);
+                right: -20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .filter-bar {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .chatbot-toggle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- AI Chatbot -->
+    <div class="ai-chatbot">
+        <div class="chatbot-toggle animate-bounce" id="chatbotToggle">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-container" id="chatbotContainer">
+            <div class="chatbot-header">
+                <h3><i class="fas fa-robot"></i> SEGi AI Assistant</h3>
+                <button class="chatbot-close" id="chatbotClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    <div class="avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        Hello! I'm your SEGi AI Assistant. How can I help you today?
+                    </div>
+                </div>
+                <div class="message bot">
+                    <div class="avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        I can help you with course registration, credit transfers, timetable queries, exam preparation, and more!
+                    </div>
+                </div>
+                <div class="quick-questions">
+                    <button class="quick-question" onclick="askAI('How many credits can I register per semester?')">
+                        Credits per semester?
+                    </button>
+                    <button class="quick-question" onclick="askAI('What is the maximum credit limit?')">
+                        Maximum credit limit?
+                    </button>
+                    <button class="quick-question" onclick="askAI('How to check my graduation progress?')">
+                        Graduation progress?
+                    </button>
+                    <button class="quick-question" onclick="askAI('When is the exam schedule?')">
+                        Exam schedule?
+                    </button>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Type your question here...">
+                <button id="chatbotSend">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" onclick="showPage('home')">
+                <div class="logo-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="logo-main">SEGi University & Colleges</div>
+                    <div class="logo-sub">Faculty of Built Environment Engineering & IT</div>
+                </div>
+            </a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showPage('home')">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('registration')">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Course Registration</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('dy2')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>DY2 Credit Transfer</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('timetable')">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Timetable</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPage('admin')">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Admin</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="nav-actions">
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <div class="user-avatar">SI</div>
+                    <div class="user-info">
+                        <div class="user-name">Saiful Islam</div>
+                        <div class="user-role">DY2 Student - Software Engineering</div>
+                    </div>
+                </div>
+                <div class="mobile-toggle" id="mobileToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <div class="page home-page active">
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-content animate-fade-in">
+                        <div class="hero-badge">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Final Year Project 2024 - Saiful Islam</span>
+                        </div>
+                        
+                        <h1 class="hero-title">
+                            Smart Academic Management System
+                        </h1>
+                        
+                        <p class="hero-description">
+                            A premium enterprise solution for SEGi University & Colleges featuring 
+                            intelligent course registration, automated credit transfers for DY2 students, 
+                            and AI-powered academic planning assistance.
+                        </p>
+                        
+                        <div class="hero-actions">
+                            <button class="btn btn-primary btn-large" onclick="showPage('dashboard')">
+                                <i class="fas fa-rocket"></i>
+                                Launch Dashboard
+                            </button>
+                            <button class="btn btn-secondary btn-large" onclick="showPage('dy2')">
+                                <i class="fas fa-exchange-alt"></i>
+                                View DY2 Transfer
+                            </button>
+                        </div>
+                        
+                        <div class="hero-stats">
+                            <div class="stat-card animate-fade-in">
+                                <div class="stat-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="stat-value">44</div>
+                                <div class="stat-label">Credits Transferred</div>
+                            </div>
+                            
+                            <div class="stat-card animate-fade-in">
+                                <div class="stat-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="stat-value">52</div>
+                                <div class="stat-label">Credits Earned</div>
+                            </div>
+                            
+                            <div class="stat-card animate-fade-in">
+                                <div class="stat-icon">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">Remaining to Graduate</div>
+                            </div>
+                            
+                            <div class="stat-card animate-fade-in">
+                                <div class="stat-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="stat-value">AI</div>
+                                <div class="stat-label">Assistant Ready</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-visual">
+                        <div class="dashboard-preview animate-float">
+                            <div class="preview-header">
+                                <div class="preview-nav">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="preview-title">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    Student Dashboard
+                                </div>
+                            </div>
+                            
+                            <div class="preview-content">
+                                <div class="preview-card">
+                                    <div class="preview-card-header">
+                                        <h4>Academic Progress</h4>
+                                        <span class="badge badge-success">DY2 Active</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-label">
+                                            <span>Graduation Progress</span>
+                                            <span>80%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 80%"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-center" style="margin-top: 1rem; margin-bottom: 0;">96/120 Credits Completed</p>
+                                </div>
+                                
+                                <div class="preview-card">
+                                    <div class="preview-card-header">
+                                        <h4>Specialization</h4>
+                                        <span class="badge badge-primary">Software Engineering</span>
+                                    </div>
+                                    <div class="stats-grid">
+                                        <div class="stat-item">
+                                            <span class="stat-value-sm">44</span>
+                                            <span class="stat-label-sm">Transferred</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value-sm">52</span>
+                                            <span class="stat-label-sm">Completed</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value-sm">24</span>
+                                            <span class="stat-label-sm">Remaining</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page dashboard-page">
+            <div class="container">
+                <div class="dashboard-header">
+                    <div class="welcome-card animate-fade-in">
+                        <div class="welcome-content">
+                            <h2>Welcome Back, Saiful!</h2>
+                            <p>Track your academic progress and manage your studies efficiently in the Faculty of Built Environment Engineering & IT.</p>
+                            <p><strong>Specialization:</strong> Software Engineering (SE)</p>
+                        </div>
+                        <div class="academic-year">
+                            <h4>Academic Year 2025/2026</h4>
+                            <p>Final Year, Semester 1</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="progress-section animate-fade-in">
+                        <h3>Academic Progress Overview</h3>
+                        <div class="progress-cards">
+                            <div class="progress-card">
+                                <h4>Graduation Progress</h4>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill progress-large" style="width: 80%"></div>
+                                    </div>
+                                    <div class="progress-label">
+                                        <span>80% Complete</span>
+                                        <span>96/120 Credits</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-card">
+                                <h4>Current CGPA</h4>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill progress-large" style="width: 85%"></div>
+                                    </div>
+                                    <div class="progress-label">
+                                        <span>3.40 / 4.00</span>
+                                        <span>Excellent</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-card">
+                                <h4>Specialization Progress</h4>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill progress-large" style="width: 90%"></div>
+                                    </div>
+                                    <div class="progress-label">
+                                        <span>90% Complete</span>
+                                        <span>Software Engineering</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overall-progress">
+                            <h3>Overall Graduation Progress</h3>
+                            <div class="percentage">80%</div>
+                            <p><strong>44 credits</strong> transferred from previous qualification.</p>
+                            <p><strong>52 credits</strong> earned at SEGi University.</p>
+                            <p><strong>24 credits</strong> remaining to complete Bachelor of IT.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section animate-slide-left">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <a href="#" class="quick-action-btn" onclick="showPage('registration')">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Register Courses</span>
+                            </a>
+                            <a href="#" class="quick-action-btn" onclick="showPage('timetable')">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>View Timetable</span>
+                            </a>
+                            <a href="#" class="quick-action-btn" onclick="showPage('dy2')">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>Check Credit Transfer</span>
+                            </a>
+                            <a href="#" class="quick-action-btn">
+                                <i class="fas fa-file-alt"></i>
+                                <span>View Transcript</span>
+                            </a>
+                            <a href="#" class="quick-action-btn" onclick="toggleChatbot()">
+                                <i class="fas fa-robot"></i>
+                                <span>AI Assistant</span>
+                            </a>
+                        </div>
+                        
+                        <div class="sidebar-section" style="margin-top: 2rem;">
+                            <h3>Academic Summary</h3>
+                            <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--light); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">Total Credits Required</div>
+                                        <div style="font-size: 0.875rem; color: var(--dark-gray);">Bachelor of IT</div>
+                                    </div>
+                                    <div style="color: var(--primary); font-weight: 600;">120</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--light); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">Credits Transferred (DY2)</div>
+                                        <div style="font-size: 0.875rem; color: var(--dark-gray);">From Previous Diploma</div>
+                                    </div>
+                                    <div style="color: var(--success); font-weight: 600;">44</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--light); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">Credits Earned at SEGi</div>
+                                        <div style="font-size: 0.875rem; color: var(--dark-gray);">Completed Courses</div>
+                                    </div>
+                                    <div style="color: var(--info); font-weight: 600;">52</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--light); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: 600;">Credits Remaining</div>
+                                        <div style="font-size: 0.875rem; color: var(--dark-gray);">To Graduate</div>
+                                    </div>
+                                    <div style="color: var(--warning); font-weight: 600;">24</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Registration Page -->
+        <div class="page registration-page">
+            <div class="container">
+                <div class="registration-header animate-fade-in">
+                    <h2>Course Registration - January 2026 Session</h2>
+                    <p>Register for your final year courses. Specialization: Software Engineering</p>
+                </div>
+                
+                <div class="registration-grid">
+                    <!-- Student Information -->
+                    <div class="student-card animate-slide-left">
+                        <div class="student-header">
+                            <div class="student-avatar">SI</div>
+                            <div class="student-info">
+                                <h3>Saiful Islam</h3>
+                                <p class="text-primary">DY2 Student - Bachelor of IT</p>
+                                <p class="text-accent" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                    <i class="fas fa-code"></i> Specialization: Software Engineering
+                                </p>
+                                <p style="font-size: 0.875rem; color: var(--dark-gray); margin-top: 0.25rem;">
+                                    Faculty of Built Environment Engineering & IT
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="student-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Student ID</span>
+                                <span class="detail-value">STD2024001</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Passport No</span>
+                                <span class="detail-value">A0763234</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Nationality</span>
+                                <span class="detail-value">Bangladesh</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Mobile</span>
+                                <span class="detail-value">+60 14-2342 3523</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Email</span>
+                                <span class="detail-value">saiful.islam@segi.edu.my</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Current Semester</span>
+                                <span class="detail-value">Jan-Apr 2026 (Final Year 1)</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Student Status</span>
+                                <span class="detail-value text-success">Active - DY2</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Specialization</span>
+                                <span class="detail-value text-info">Software Engineering</span>
+                            </div>
+                        </div>
+                        
+                        <div class="semester-info">
+                            <h4>Credits Summary</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <div style="font-size: 0.875rem; opacity: 0.9;">Transferred Credits</div>
+                                    <div style="font-size: 1.5rem; font-weight: 600;">44</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.875rem; opacity: 0.9;">Earned at SEGi</div>
+                                    <div style="font-size: 1.5rem; font-weight: 600;">52</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.875rem; opacity: 0.9;">Remaining</div>
+                                    <div style="font-size: 1.5rem; font-weight: 600;">24</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.875rem; opacity: 0.9;">This Semester</div>
+                                    <div style="font-size: 1.5rem; font-weight: 600;">15</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course Selection -->
+                    <div class="courses-section animate-slide-right">
+                        <div class="filter-bar">
+                            <div class="search-box">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" class="search-input" placeholder="Search courses by name or code..." id="courseSearch">
+                            </div>
+                            
+                            <select class="select-box" id="departmentFilter">
+                                <option value="">All Departments</option>
+                                <option value="software">Software Engineering</option>
+                                <option value="computing">Computing & IT</option>
+                                <option value="general">General Studies</option>
+                            </select>
+                            
+                            <select class="select-box" id="semesterFilter">
+                                <option value="">All Semesters</option>
+                                <option value="jan2026">Jan-Apr 2026</option>
+                                <option value="may2026">May-Aug 2026</option>
+                            </select>
+                            
+                            <select class="select-box" id="creditFilter">
+                                <option value="">All Credits</option>
+                                <option value="3">3 Credits</option>
+                                <option value="4">4 Credits</option>
+                            </select>
+                        </div>
+                        
+                        <div class="courses-list" id="coursesList">
+                            <!-- Course cards will be loaded by JavaScript -->
+                        </div>
+                        
+                        <!-- Selected Courses -->
+                        <div class="selected-courses">
+                            <h3>Selected Courses <span id="selectedCount">(0)</span></h3>
+                            <div class="selected-list" id="selectedCoursesList">
+                                <div style="text-align: center; padding: 2rem; color: var(--dark-gray);">
+                                    <i class="fas fa-clipboard-list" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                    <p>No courses selected yet. Browse available courses above.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="registration-summary">
+                                <div class="summary-row">
+                                    <span>Total Courses Selected:</span>
+                                    <span id="totalCourses">0</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Total Credits:</span>
+                                    <span id="totalCredits">0</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Maximum Allowed:</span>
+                                    <span>18 Credits</span>
+                                </div>
+                                <div class="summary-row summary-total">
+                                    <span>Registration Fee:</span>
+                                    <span>RM 3,450.00</span>
+                                </div>
+                                
+                                <button class="btn-register" id="registerBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                    SUBMIT REGISTRATION
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Remaining Courses Section -->
+                        <div class="remaining-courses-section">
+                            <h3>Remaining Courses to Complete</h3>
+                            
+                            <div class="session-card">
+                                <div class="session-header">
+                                    <h4>May - August 2026 Session</h4>
+                                    <span class="session-badge">Final Semester</span>
+                                </div>
+                                <div class="remaining-courses-list">
+                                    <div class="remaining-course">
+                                        <div class="remaining-course-info">
+                                            <h5>Final Year Project 2</h5>
+                                            <p>BIT401 • Software Engineering Specialization • Core Project</p>
+                                        </div>
+                                        <div class="remaining-credits">3 Credits</div>
+                                    </div>
+                                    <div class="remaining-course">
+                                        <div class="remaining-course-info">
+                                            <h5>Industrial Attachment</h5>
+                                            <p>BIT402 • Professional Training • Industry Experience</p>
+                                        </div>
+                                        <div class="remaining-credits">6 Credits</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(23, 162, 184, 0.1)); border-radius: 10px; margin-top: 1rem;">
+                                <h4 style="color: var(--success);">Graduation Timeline</h4>
+                                <p style="margin-bottom: 0.5rem;">After completing these 9 credits (Final Year Project 2 + Industrial Attachment),</p>
+                                <p style="font-weight: 600; color: var(--primary); margin-bottom: 0;">You will graduate with Bachelor of IT (Software Engineering) in August 2026!</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Course History -->
+                        <div class="course-history-section">
+                            <h3>Course History</h3>
+                            <div class="history-tabs">
+                                <button class="history-tab active" onclick="showHistoryTab('registered')">
+                                    Current Registration (Jan 2026)
+                                </button>
+                                <button class="history-tab" onclick="showHistoryTab('completed')">
+                                    Completed Courses
+                                </button>
+                            </div>
+                            
+                            <div class="history-list" id="registeredCourses">
+                                <!-- Current registered courses will appear here -->
+                                <div style="text-align: center; padding: 2rem; color: var(--dark-gray);">
+                                    <i class="fas fa-clipboard-check" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                    <p>No courses registered for Jan-Apr 2026 session yet.</p>
+                                    <p>Select courses from the list above and submit registration.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="history-list" id="completedCourses" style="display: none;">
+                                <!-- Completed courses -->
+                                <div class="history-item">
+                                    <div class="history-info">
+                                        <h5>Object-Oriented Programming</h5>
+                                        <p>BIT108 • 3 Credits • Grade: A-</p>
+                                    </div>
+                                    <span class="history-grade grade-a">A-</span>
+                                </div>
+                                <div class="history-item">
+                                    <div class="history-info">
+                                        <h5>System Analysis & Design</h5>
+                                        <p>BIT109 • 3 Credits • Grade: B+</p>
+                                    </div>
+                                    <span class="history-grade grade-b">B+</span>
+                                </div>
+                                <div class="history-item">
+                                    <div class="history-info">
+                                        <h5>IT Professional Ethics</h5>
+                                        <p>BIT110 • 2 Credits • Grade: A</p>
+                                    </div>
+                                    <span class="history-grade grade-a">A</span>
+                                </div>
+                                <div class="history-item">
+                                    <div class="history-info">
+                                        <h5>IT Project Management</h5>
+                                        <p>BIT111 • 3 Credits • Grade: B+</p>
+                                    </div>
+                                    <span class="history-grade grade-b">B+</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DY2 Credit Transfer Page -->
+        <div class="page dy2-page">
+            <div class="container">
+                <div class="dy2-header animate-fade-in">
+                    <h2>Direct Year 2 Credit Transfer</h2>
+                    <p>View and manage credit transfers from previous qualifications. Compare DY2 and regular student details.</p>
+                </div>
+                
+                <!-- Student Comparison Section -->
+                <div class="student-comparison-section animate-slide-up">
+                    <h3>Student Comparison</h3>
+                    <div class="comparison-tabs">
+                        <button class="comparison-tab active" onclick="showComparisonTab('dy2')">
+                            DY2 Student (Saiful Islam)
+                        </button>
+                        <button class="comparison-tab" onclick="showComparisonTab('regular')">
+                            Regular Student (Example)
+                        </button>
+                    </div>
+                    
+                    <div id="dy2StudentDetails" class="student-details-section">
+                        <h4>DY2 Student Details - Saiful Islam</h4>
+                        <div class="student-details-grid">
+                            <div class="detail-item">
+                                <strong>Name:</strong>
+                                <span>Saiful Islam</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Student ID:</strong>
+                                <span>STD2024001</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Passport:</strong>
+                                <span>A0763234</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Nationality:</strong>
+                                <span>Bangladesh</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Mobile:</strong>
+                                <span>+60 14-2342 3523</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Student Status:</strong>
+                                <span class="text-success">Direct Year 2</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Faculty:</strong>
+                                <span>Built Environment Engineering & IT</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Programme:</strong>
+                                <span>Bachelor of Information Technology</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Specialization:</strong>
+                                <span class="text-info">Software Engineering</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Credits Transferred:</strong>
+                                <span class="text-success">44</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Credits Earned at SEGi:</strong>
+                                <span>52</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Credits Remaining:</strong>
+                                <span class="text-warning">24</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="regularStudentDetails" class="student-details-section" style="display: none;">
+                        <h4>Regular Student Details - Ali bin Ahmad</h4>
+                        <div class="student-details-grid">
+                            <div class="detail-item">
+                                <strong>Name:</strong>
+                                <span>Ali bin Ahmad</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Student ID:</strong>
+                                <span>STD2023001</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>IC Number:</strong>
+                                <span>900101-01-1234</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Nationality:</strong>
+                                <span>Malaysia</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Mobile:</strong>
+                                <span>+60 12-345 6789</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Student Status:</strong>
+                                <span class="text-info">Year 3 Regular</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Faculty:</strong>
+                                <span>Built Environment Engineering & IT</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Programme:</strong>
+                                <span>Bachelor of Information Technology</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Specialization:</strong>
+                                <span>Networking</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Credits Completed:</strong>
+                                <span>90</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Current Semester:</strong>
+                                <span>Year 3, Semester 2</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>CGPA:</strong>
+                                <span>3.25</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dy2-grid">
+                    <!-- Transfer Information -->
+                    <div class="transfer-info animate-slide-left">
+                        <div class="transfer-summary">
+                            <h4 style="color: white; margin-bottom: 1rem;">Credit Transfer Summary</h4>
+                            <div class="summary-item">
+                                <span>Total Credits Required:</span>
+                                <span style="font-weight: 600;">120</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Credits Transferred:</span>
+                                <span style="font-weight: 600;">44</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Credits Earned at SEGi:</span>
+                                <span style="font-weight: 600;">52</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Credits Remaining:</span>
+                                <span style="font-weight: 600;">24</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Transfer Status:</span>
+                                <span style="color: var(--accent); font-weight: 600;">Approved</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Graduation Progress:</span>
+                                <span style="color: var(--success); font-weight: 600;">80% Complete</span>
+                            </div>
+                        </div>
+                        
+                        <div class="transfer-steps">
+                            <h4>DY2 Transfer Process</h4>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div>
+                                    <div style="font-weight: 600;">Submit Documents</div>
+                                    <div style="font-size: 0.875rem; color: var(--dark-gray);">Upload transcripts and certificates from previous institution</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div>
+                                    <div style="font-weight: 600;">Academic Evaluation</div>
+                                    <div style="font-size: 0.875rem; color: var(--dark-gray);">Faculty committee reviews and maps equivalent courses</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div>
+                                    <div style="font-weight: 600;">Credit Approval</div>
+                                    <div style="font-size: 0.875rem; color: var(--dark-gray);">44 credits approved for transfer to BIT programme</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div>
+                                    <div style="font-weight: 600;">Enrollment</div>
+                                    <div style="font-size: 0.875rem; color: var(--dark-gray);">Direct entry to Year 2 with transferred credits</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Regular Student Progress -->
+                        <div class="regular-student-progress" id="regularProgress" style="display: none;">
+                            <h4>Regular Student Progress</h4>
+                            <div class="progress-tracker">
+                                <div class="year-section">
+                                    <div class="year-header">
+                                        <h5>Year 1 (Completed)</h5>
+                                        <span class="badge badge-success">36 Credits</span>
+                                    </div>
+                                    <div class="semester-courses">
+                                        <div class="semester-course">
+                                            <span>Programming Fundamentals</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Database Fundamentals</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Mathematics for Computing</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="year-section">
+                                    <div class="year-header">
+                                        <h5>Year 2 (Completed)</h5>
+                                        <span class="badge badge-success">36 Credits</span>
+                                    </div>
+                                    <div class="semester-courses">
+                                        <div class="semester-course">
+                                            <span>Data Structures</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Web Development</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Computer Networks</span>
+                                            <span class="course-status-badge completed">Completed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="year-section">
+                                    <div class="year-header">
+                                        <h5>Year 3 (Current)</h5>
+                                        <span class="badge badge-primary">18 Credits</span>
+                                    </div>
+                                    <div class="semester-courses">
+                                        <div class="semester-course">
+                                            <span>Software Engineering</span>
+                                            <span class="course-status-badge current">In Progress</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Mobile App Development</span>
+                                            <span class="course-status-badge current">In Progress</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Cyber Security</span>
+                                            <span class="course-status-badge upcoming">Upcoming</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="year-section">
+                                    <div class="year-header">
+                                        <h5>Year 4 (Upcoming)</h5>
+                                        <span class="badge badge-warning">30 Credits</span>
+                                    </div>
+                                    <div class="semester-courses">
+                                        <div class="semester-course">
+                                            <span>Final Year Project 1</span>
+                                            <span class="course-status-badge upcoming">Upcoming</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Final Year Project 2</span>
+                                            <span class="course-status-badge upcoming">Upcoming</span>
+                                        </div>
+                                        <div class="semester-course">
+                                            <span>Industrial Attachment</span>
+                                            <span class="course-status-badge upcoming">Upcoming</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transfer Table -->
+                    <div class="transfer-table animate-slide-right">
+                        <h3>IT Subject Credit Transfer Details</h3>
+                        <p style="color: var(--dark-gray); margin-bottom: 1.5rem;">44 credits transferred from previous Diploma in IT programme</p>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Previous Subject</th>
+                                        <th>Previous Code</th>
+                                        <th>SEGi Equivalent</th>
+                                        <th>SEGi Code</th>
+                                        <th>Credits</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transferTable">
+                                    <!-- Rows will be populated by JavaScript -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background: var(--light);">
+                                        <td colspan="4" style="text-align: right; font-weight: 600;">Total Credits Transferred:</td>
+                                        <td style="font-weight: 600; color: var(--success);">44</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: var(--light); border-radius: 10px;">
+                            <h4>Notes for Lecturers</h4>
+                            <ul style="margin-left: 1.5rem; color: var(--dark-gray); margin-top: 1rem;">
+                                <li><strong>Total Programme Credits:</strong> 120 credits required for Bachelor of IT</li>
+                                <li><strong>Credits Transferred:</strong> 44 credits (37% of total programme)</li>
+                                <li><strong>Credits Earned at SEGi:</strong> 52 credits completed successfully</li>
+                                <li><strong>Remaining Credits:</strong> 24 credits to be completed at SEGi</li>
+                                <li><strong>Student Status:</strong> Final Year, Semester 1 (Jan-Apr 2026)</li>
+                                <li><strong>Specialization:</strong> Software Engineering - 90% completed</li>
+                                <li><strong>Academic Standing:</strong> Excellent (CGPA: 3.40/4.00)</li>
+                                <li><strong>Graduation Timeline:</strong> Expected graduation in August 2026</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timetable Page -->
+        <div class="page timetable-page">
+            <div class="container">
+                <div class="timetable-header animate-fade-in">
+                    <h2>Academic Timetable</h2>
+                    <p>Your weekly class schedule for Semester Jan-Apr 2026</p>
+                </div>
+                
+                <div class="timetable-controls animate-fade-in">
+                    <div class="week-nav">
+                        <button class="btn btn-small">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </button>
+                        <div class="current-week">Week 1: January 5 - January 9, 2026</div>
+                        <button class="btn btn-small">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <button class="btn btn-primary btn-small" onclick="askAI('When is the exam schedule for this semester?')">
+                        <i class="fas fa-robot"></i>
+                        Ask AI about Exams
+                    </button>
+                </div>
+                
+                <div class="timetable-grid animate-fade-in">
+                    <div class="timetable-header-row">
+                        <div class="timetable-cell">Time</div>
+                        <div class="timetable-cell">Monday</div>
+                        <div class="timetable-cell">Tuesday</div>
+                        <div class="timetable-cell">Wednesday</div>
+                        <div class="timetable-cell">Thursday</div>
+                        <div class="timetable-cell">Friday</div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">8:00 - 9:00</div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">9:00 - 10:00</div>
+                        <div class="class-slot">
+                            <div class="class-event">
+                                <div class="class-code">BIT301</div>
+                                <div class="class-time">9:00 - 11:00</div>
+                                <div>Internet of Things</div>
+                                <div>Dr. Ahmad Farid</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event">
+                                <div class="class-code">BIT301</div>
+                                <div class="class-time">9:00 - 11:00</div>
+                                <div>Lab Session</div>
+                                <div>Room: IoT Lab 401</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">10:00 - 11:00</div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #6c63ff, #8b5cf6);">
+                                <div class="class-code">BIT302</div>
+                                <div class="class-time">10:00 - 12:00</div>
+                                <div>Information Management</div>
+                                <div>Prof. Sarah Lim</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #6c63ff, #8b5cf6);">
+                                <div class="class-code">BIT302</div>
+                                <div class="class-time">10:00 - 11:00</div>
+                                <div>Tutorial</div>
+                                <div>Room: 302</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">11:00 - 12:00</div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #00b4d8, #0096c7);">
+                                <div class="class-code">BIT303</div>
+                                <div class="class-time">11:00 - 1:00</div>
+                                <div>Software Testing</div>
+                                <div>Mr. Raj Kumar</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #00b4d8, #0096c7);">
+                                <div class="class-code">BIT303</div>
+                                <div class="class-time">11:00 - 12:00</div>
+                                <div>Lab Session</div>
+                                <div>Room: SE Lab 303</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">12:00 - 1:00</div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                                <div class="class-code">BIT304</div>
+                                <div class="class-time">12:00 - 2:00</div>
+                                <div>Final Year Project 1</div>
+                                <div>Dr. Chen Wei</div>
+                            </div>
+                        </div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+                                <div class="class-code">MPU2201</div>
+                                <div class="class-time">12:00 - 1:00</div>
+                                <div>Falsafah dan Isu Semasa</div>
+                                <div>Cikgu Aminah</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                                <div class="class-code">BIT304</div>
+                                <div class="class-time">12:00 - 1:00</div>
+                                <div>Project Meeting</div>
+                                <div>Room: Project Lab 401</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                    </div>
+                    
+                    <div class="timetable-row">
+                        <div class="time-slot">1:00 - 2:00</div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot"></div>
+                        <div class="class-slot">
+                            <div class="class-event" style="background: linear-gradient(135deg, #8b4513, #a0522d);">
+                                <div class="class-code">BIT304</div>
+                                <div class="class-time">1:00 - 3:00</div>
+                                <div>FYP 1 Consultation</div>
+                                <div>Dr. Chen Wei</div>
+                            </div>
+                        </div>
+                        <div class="class-slot"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 15px; box-shadow: var(--shadow-sm);">
+                    <h4>Timetable Summary - Semester Jan-Apr 2026</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                        <div style="padding: 1rem; background: var(--light); border-radius: 10px;">
+                            <div style="font-weight: 600; color: var(--primary);">Total Courses</div>
+                            <div style="font-size: 1.5rem; font-weight: 600;">5 Courses</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--light); border-radius: 10px;">
+                            <div style="font-weight: 600; color: var(--primary);">Total Credits</div>
+                            <div style="font-size: 1.5rem; font-weight: 600;">15 Credits</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--light); border-radius: 10px;">
+                            <div style="font-weight: 600; color: var(--primary);">Contact Hours</div>
+                            <div style="font-size: 1.5rem; font-weight: 600;">15 Hours/Week</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--light); border-radius: 10px;">
+                            <div style="font-weight: 600; color: var(--primary);">Student Status</div>
+                            <div style="font-size: 1.125rem; font-weight: 600; color: var(--success);">DY2 Final Year</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Page -->
+        <div class="page admin-page">
+            <div class="container">
+                <div class="admin-header animate-fade-in">
+                    <h2>Admin Portal</h2>
+                    <p>System administration and management dashboard for Faculty of Built Environment Engineering & IT</p>
+                </div>
+                
+                <div class="admin-grid">
+                    <div class="admin-sidebar animate-slide-left">
+                        <h3>Admin Menu</h3>
+                        <div class="admin-menu">
+                            <a href="#" class="admin-menu-item active">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Login / Sign Up</span>
+                            </a>
+                            <a href="#" class="admin-menu-item">
+                                <i class="fas fa-users"></i>
+                                <span>Student Management</span>
+                            </a>
+                            <a href="#" class="admin-menu-item">
+                                <i class="fas fa-book"></i>
+                                <span>Course Management</span>
+                            </a>
+                            <a href="#" class="admin-menu-item">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>Credit Transfer Approval</span>
+                            </a>
+                            <a href="#" class="admin-menu-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics & Reports</span>
+                            </a>
+                            <a href="#" class="admin-menu-item">
+                                <i class="fas fa-cog"></i>
+                                <span>System Settings</span>
+                            </a>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: var(--light); border-radius: 10px;">
+                            <h4>Faculty Statistics</h4>
+                            <div style="display: grid; gap: 0.75rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Total Students</span>
+                                    <span style="font-weight: 600;">1,247</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>DY2 Students</span>
+                                    <span style="color: var(--info); font-weight: 600;">156</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Active Courses</span>
+                                    <span style="font-weight: 600;">84</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Credit Transfers</span>
+                                    <span style="color: var(--success); font-weight: 600;">2,340</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>AI Assistant Queries</span>
+                                    <span style="color: var(--primary); font-weight: 600;">5,672</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-content animate-slide-right">
+                        <div class="login-section">
+                            <h3>Admin Login / Sign Up</h3>
+                            <p>Access the administrative dashboard with your credentials.</p>
+                            
+                            <div class="login-form">
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" placeholder="admin@segi.edu.my">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" placeholder="Enter your password">
+                                </div>
+                                
+                                <div class="form-options">
+                                    <div class="remember-me">
+                                        <input type="checkbox" id="remember">
+                                        <label for="remember">Remember me</label>
+                                    </div>
+                                    <a href="#" class="forgot-password">Forgot Password?</a>
+                                </div>
+                                
+                                <button class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Login to Admin Dashboard
+                                </button>
+                            </div>
+                            
+                            <div class="form-footer">
+                                <p>Need admin access? <a href="#" class="signup-link">Request Sign Up</a></p>
+                            </div>
+                            
+                            <div style="margin-top: 2rem; padding: 1.5rem; background: var(--light); border-radius: 10px;">
+                                <h4>Admin Features for Faculty Management</h4>
+                                <ul style="margin-left: 1.5rem; color: var(--dark-gray); margin-top: 1rem;">
+                                    <li><strong>Student Management:</strong> Enroll, update, and manage student records</li>
+                                    <li><strong>Course Management:</strong> Create, modify, and schedule courses</li>
+                                    <li><strong>Credit Transfer Approval:</strong> Review and approve DY2 credit transfers</li>
+                                    <li><strong>Academic Reports:</strong> Generate transcripts and progress reports</li>
+                                    <li><strong>System Configuration:</strong> Set academic rules and policies</li>
+                                    <li><strong>Faculty Analytics:</strong> Monitor student performance and trends</li>
+                                    <li><strong>AI Assistant Management:</strong> Configure and monitor AI chatbot performance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div>
+                            <div class="logo-main">SEGi University & Colleges</div>
+                            <div class="footer-description">
+                                Faculty of Built Environment Engineering & Information Technology
+                                <br>Professional academic management platform. Final Year Project by Saiful Islam.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="#" onclick="showPage('dashboard')">
+                            <i class="fas fa-chevron-right"></i>
+                            Student Dashboard
+                        </a>
+                        <a href="#" onclick="showPage('registration')">
+                            <i class="fas fa-chevron-right"></i>
+                            Course Registration
+                        </a>
+                        <a href="#" onclick="showPage('dy2')">
+                            <i class="fas fa-chevron-right"></i>
+                            Credit Transfer
+                        </a>
+                        <a href="#" onclick="showPage('timetable')">
+                            <i class="fas fa-chevron-right"></i>
+                            Timetable
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Student Information</h4>
+                    <div class="footer-links">
+                        <a href="#">
+                            <i class="fas fa-user-graduate"></i>
+                            Saiful Islam
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-id-card"></i>
+                            Passport: A0763234
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-globe-asia"></i>
+                            Bangladesh
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-mobile-alt"></i>
+                            +60 14-2342 3523
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-university"></i>
+                            DY2 Student - Software Engineering
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Contact Information</h4>
+                    <div class="footer-links">
+                        <a href="#">
+                            <i class="fas fa-envelope"></i>
+                            saiful.islam@segi.edu.my
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-book"></i>
+                            Bachelor of IT (Software Engineering)
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-building"></i>
+                            Faculty of Built Environment Engineering & IT
+                        </a>
+                        <a href="#">
+                            <i class="fas fa-map-marker-alt"></i>
+                            SEGi University, Malaysia
+                        </a>
+                        <a href="#" onclick="toggleChatbot()">
+                            <i class="fas fa-robot"></i>
+                            AI Assistant
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                &copy; 2024 SEGi University & Colleges. Smart Academic Management System - Final Year Project.
+                <br>Developed by Saiful Islam for Bachelor of Information Technology - Direct Year 2.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== GLOBAL DATA =====
+        // Course Data for Jan-Apr 2026
+        const coursesData = [
+            {
+                id: 1,
+                code: "BIT301",
+                name: "Internet of Things",
+                credits: 3,
+                department: "Software Engineering",
+                semester: "Jan-Apr 2026",
+                schedule: "Monday 9:00-11:00 AM, Wednesday 9:00-11:00 AM",
+                instructor: "Dr. Ahmad Farid",
+                seats: 40,
+                seatsAvailable: 15,
+                prerequisite: "BIT201, BIT205",
+                prerequisiteName: "Data Structures, Computer Networks",
+                status: "available",
+                specialization: "Software Engineering"
+            },
+            {
+                id: 2,
+                code: "BIT302",
+                name: "Information Management",
+                credits: 3,
+                department: "Software Engineering",
+                semester: "Jan-Apr 2026",
+                schedule: "Tuesday 10:00-12:00 PM, Thursday 10:00-11:00 AM",
+                instructor: "Prof. Sarah Lim",
+                seats: 35,
+                seatsAvailable: 8,
+                prerequisite: "BIT202",
+                prerequisiteName: "Database Systems",
+                status: "warning",
+                specialization: "Software Engineering"
+            },
+            {
+                id: 3,
+                code: "BIT303",
+                name: "Software Testing",
+                credits: 3,
+                department: "Software Engineering",
+                semester: "Jan-Apr 2026",
+                schedule: "Wednesday 11:00-1:00 PM, Friday 11:00-12:00 PM",
+                instructor: "Mr. Raj Kumar",
+                seats: 45,
+                seatsAvailable: 25,
+                prerequisite: "BIT204",
+                prerequisiteName: "Software Engineering",
+                status: "available",
+                specialization: "Software Engineering"
+            },
+            {
+                id: 4,
+                code: "BIT304",
+                name: "Final Year Project 1",
+                credits: 4,
+                department: "Software Engineering",
+                semester: "Jan-Apr 2026",
+                schedule: "Monday 12:00-2:00 PM, Thursday 1:00-3:00 PM",
+                instructor: "Dr. Chen Wei",
+                seats: 30,
+                seatsAvailable: 5,
+                prerequisite: "Completed 90 credits",
+                prerequisiteName: "Completion of Year 3",
+                status: "warning",
+                specialization: "Software Engineering"
+            },
+            {
+                id: 5,
+                code: "MPU2201",
+                name: "Falsafah dan Isu Semasa",
+                credits: 2,
+                department: "General Studies",
+                semester: "Jan-Apr 2026",
+                schedule: "Tuesday 12:00-1:00 PM",
+                instructor: "Cikgu Aminah",
+                seats: 50,
+                seatsAvailable: 30,
+                prerequisite: "None",
+                prerequisiteName: "No prerequisites",
+                status: "available",
+                specialization: "General"
+            }
+        ];
+
+        // Credit Transfer Data - 44 credits
+        const transferData = [
+            {
+                previousSubject: "Introduction to Programming",
+                previousCode: "DIP101",
+                segiEquivalent: "Programming Fundamentals",
+                segiCode: "BIT101",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Database Management",
+                previousCode: "DIP102",
+                segiEquivalent: "Introduction to Databases",
+                segiCode: "BIT102",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Web Technologies",
+                previousCode: "DIP103",
+                segiEquivalent: "Introduction to Web Technologies",
+                segiCode: "BIT103",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Software Development",
+                previousCode: "DIP104",
+                segiEquivalent: "Software Development Fundamentals",
+                segiCode: "BIT104",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Network Basics",
+                previousCode: "DIP105",
+                segiEquivalent: "Network Fundamentals",
+                segiCode: "BIT105",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Computer Architecture",
+                previousCode: "DIP106",
+                segiEquivalent: "Computer Organization",
+                segiCode: "BIT106",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Discrete Mathematics",
+                previousCode: "DIP201",
+                segiEquivalent: "Discrete Structures",
+                segiCode: "MATH201",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Operating Systems",
+                previousCode: "DIP202",
+                segiEquivalent: "Operating Systems Concepts",
+                segiCode: "BIT107",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Data Structures",
+                previousCode: "DIP203",
+                segiEquivalent: "Data Structures & Algorithms",
+                segiCode: "BIT201",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Database Systems",
+                previousCode: "DIP204",
+                segiEquivalent: "Database Systems",
+                segiCode: "BIT202",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Object-Oriented Programming",
+                previousCode: "DIP205",
+                segiEquivalent: "Object-Oriented Programming",
+                segiCode: "BIT108",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "System Analysis & Design",
+                previousCode: "DIP206",
+                segiEquivalent: "System Analysis & Design",
+                segiCode: "BIT109",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Computer Ethics",
+                previousCode: "DIP207",
+                segiEquivalent: "IT Professional Ethics",
+                segiCode: "BIT110",
+                credits: 2,
+                status: "transferred"
+            },
+            {
+                previousSubject: "Project Management",
+                previousCode: "DIP208",
+                segiEquivalent: "IT Project Management",
+                segiCode: "BIT111",
+                credits: 3,
+                status: "transferred"
+            },
+            {
+                previousSubject: "English for IT",
+                previousCode: "DIP209",
+                segiEquivalent: "Technical Communication",
+                segiCode: "MPU2201",
+                credits: 2,
+                status: "transferred"
+            }
+        ];
+
+        // AI Assistant Knowledge Base
+        const aiKnowledgeBase = {
+            "credits per semester": "Students can register between 12 to 18 credits per semester. The minimum is 12 credits to maintain full-time status, and maximum is 18 credits without special approval.",
+            "maximum credit limit": "The maximum credit limit per semester is 18 credits. For special cases requiring more than 18 credits, students need approval from the faculty dean.",
+            "graduation progress": "You have completed 96 out of 120 credits (80% progress). You have 24 credits remaining: 15 credits in Jan-Apr 2026 and 9 credits in May-Aug 2026.",
+            "exam schedule": "The exam schedule for Jan-Apr 2026 semester will be released in March 2026. Typically, exams are held in the last two weeks of April.",
+            "course registration": "Course registration for Jan-Apr 2026 is now open. You need to register for 5 courses totaling 15 credits to complete your specialization requirements.",
+            "credit transfer": "As a DY2 student, you have transferred 44 credits from your previous diploma. This represents 37% of the total 120 credits required for graduation.",
+            "timetable": "Your timetable for Jan-Apr 2026 shows 15 contact hours per week across 5 courses. You can view the detailed schedule in the Timetable section.",
+            "software engineering specialization": "Your Software Engineering specialization requires completion of 36 specialized credits. You have completed 30 credits and have 6 credits remaining.",
+            "final year project": "Final Year Project 1 (4 credits) is scheduled for Jan-Apr 2026. Final Year Project 2 (3 credits) will be in May-Aug 2026 along with Industrial Attachment (6 credits).",
+            "industrial attachment": "Industrial Attachment (6 credits) is scheduled for May-Aug 2026. This is a mandatory industry training component for all final year students.",
+            "cgpa requirements": "To graduate with honors, you need a minimum CGPA of 3.00. Your current CGPA is 3.40, which is in the excellent range.",
+            "graduation date": "Based on your current progress, you are expected to graduate in August 2026 after completing Final Year Project 2 and Industrial Attachment.",
+            "ai assistant": "I am your SEGi AI Assistant. I can help you with course registration, credit transfers, timetable queries, exam information, and academic planning.",
+            "help": "I can help you with: course registration, credit transfer information, timetable queries, exam schedules, graduation progress, and academic planning. Just ask me anything!"
+        };
+
+        // Selected courses array
+        let selectedCourses = [];
+
+        // ===== AI CHATBOT FUNCTIONS =====
+        function toggleChatbot() {
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            chatbotContainer.classList.toggle('active');
+        }
+
+        function askAI(question) {
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const chatbotInput = document.getElementById('chatbotInput');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user';
+            userMessage.innerHTML = `
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">${question}</div>
+            `;
+            chatbotMessages.appendChild(userMessage);
+            
+            // Clear input
+            chatbotInput.value = '';
+            
+            // Scroll to bottom
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            
+            // Simulate AI thinking
+            setTimeout(() => {
+                // Find best match in knowledge base
+                let answer = "I'm not sure about that. Please contact your faculty advisor for specific questions.";
+                const lowerQuestion = question.toLowerCase();
+                
+                for (const [key, value] of Object.entries(aiKnowledgeBase)) {
+                    if (lowerQuestion.includes(key)) {
+                        answer = value;
+                        break;
+                    }
+                }
+                
+                // Add AI response
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot';
+                botMessage.innerHTML = `
+                    <div class="avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">${answer}</div>
+                `;
+                chatbotMessages.appendChild(botMessage);
+                
+                // Scroll to bottom
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }, 1000);
+        }
+
+        // ===== PAGE MANAGEMENT =====
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.querySelector(`.${pageId}-page`).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Find and activate the corresponding nav link
+            const navLink = Array.from(document.querySelectorAll('.nav-link')).find(link => {
+                return link.textContent.includes(pageId.charAt(0).toUpperCase() + pageId.slice(1)) || 
+                       (pageId === 'home' && link.textContent.includes('Home'));
+            });
+            
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+            
+            // Load specific page data
+            if (pageId === 'registration') {
+                loadCourses();
+                updateSelectedCourses();
+            } else if (pageId === 'dy2') {
+                loadTransferTable();
+            }
+            
+            // Close mobile menu if open
+            document.getElementById('navMenu').classList.remove('active');
+            
+            return false;
+        }
+
+        // ===== COURSE REGISTRATION =====
+        function loadCourses() {
+            const coursesList = document.getElementById('coursesList');
+            coursesList.innerHTML = '';
+            
+            coursesData.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                
+                let statusClass = 'status-available';
+                let statusText = 'Available';
+                
+                if (course.seatsAvailable === 0) {
+                    statusClass = 'status-full';
+                    statusText = 'Full';
+                } else if (course.seatsAvailable <= 5) {
+                    statusClass = 'status-warning';
+                    statusText = 'Low Seats';
+                }
+                
+                const isSelected = selectedCourses.some(c => c.id === course.id);
+                const isDisabled = course.seatsAvailable === 0 || isSelected;
+                
+                courseCard.innerHTML = `
+                    <div class="course-header">
+                        <div class="course-title">
+                            <h4>${course.name}</h4>
+                            <div class="course-code">${course.code} • ${course.credits} Credits</div>
+                            <div style="font-size: 0.875rem; color: var(--info); margin-top: 0.25rem;">
+                                <i class="fas fa-code"></i> ${course.specialization}
+                            </div>
+                        </div>
+                        <div class="course-status ${statusClass}">${statusText}</div>
+                    </div>
+                    
+                    <div class="course-details">
+                        <div class="course-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--dark-gray);">Schedule</div>
+                                <div style="font-weight: 500;">${course.schedule}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="course-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--dark-gray);">Instructor</div>
+                                <div style="font-weight: 500;">${course.instructor}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="course-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--dark-gray);">Semester</div>
+                                <div style="font-weight: 500;">${course.semester}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="course-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--dark-gray);">Seats</div>
+                                <div style="font-weight: 500;">${course.seatsAvailable}/${course.seats}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="course-footer">
+                        <div class="prerequisite">
+                            <strong>Prerequisite:</strong> ${course.prerequisiteName} (${course.prerequisite})
+                        </div>
+                        <button class="btn-select" onclick="selectCourse(${course.id})" ${isDisabled ? 'disabled' : ''}>
+                            ${isSelected ? 'Selected' : 'Select'}
+                        </button>
+                    </div>
+                `;
+                
+                coursesList.appendChild(courseCard);
+            });
+        }
+
+        function selectCourse(courseId) {
+            const course = coursesData.find(c => c.id === courseId);
+            if (course && !selectedCourses.some(c => c.id === courseId)) {
+                selectedCourses.push(course);
+                updateSelectedCourses();
+                loadCourses(); // Refresh course list to update button states
+            }
+        }
+
+        function removeCourse(courseId) {
+            selectedCourses = selectedCourses.filter(c => c.id !== courseId);
+            updateSelectedCourses();
+            loadCourses(); // Refresh course list to update button states
+        }
+
+        function updateSelectedCourses() {
+            const selectedList = document.getElementById('selectedCoursesList');
+            const selectedCount = document.getElementById('selectedCount');
+            const totalCourses = document.getElementById('totalCourses');
+            const totalCredits = document.getElementById('totalCredits');
+            
+            // Update counts
+            selectedCount.textContent = `(${selectedCourses.length})`;
+            totalCourses.textContent = selectedCourses.length;
+            
+            // Calculate total credits
+            const credits = selectedCourses.reduce((sum, course) => sum + course.credits, 0);
+            totalCredits.textContent = credits;
+            
+            // Update selected courses list
+            if (selectedCourses.length === 0) {
+                selectedList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--dark-gray);">
+                        <i class="fas fa-clipboard-list" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>No courses selected yet. Browse available courses above.</p>
+                    </div>
+                `;
+            } else {
+                selectedList.innerHTML = '';
+                selectedCourses.forEach(course => {
+                    const item = document.createElement('div');
+                    item.className = 'selected-item';
+                    item.innerHTML = `
+                        <div class="selected-info">
+                            <h5>${course.name}</h5>
+                            <p>${course.code} • ${course.credits} Credits • ${course.instructor}</p>
+                        </div>
+                        <button class="btn-remove" onclick="removeCourse(${course.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    selectedList.appendChild(item);
+                });
+            }
+            
+            // Update register button
+            const registerBtn = document.getElementById('registerBtn');
+            if (selectedCourses.length === 0) {
+                registerBtn.disabled = true;
+                registerBtn.style.opacity = '0.6';
+                registerBtn.style.cursor = 'not-allowed';
+                registerBtn.onclick = null;
+            } else {
+                registerBtn.disabled = false;
+                registerBtn.style.opacity = '1';
+                registerBtn.style.cursor = 'pointer';
+                registerBtn.onclick = () => {
+                    const credits = selectedCourses.reduce((sum, course) => sum + course.credits, 0);
+                    showNotification(`Successfully registered for ${selectedCourses.length} courses with total ${credits} credits for Jan-Apr 2026 semester!`, 'success');
+                    
+                    // Update course history
+                    const registeredCourses = document.getElementById('registeredCourses');
+                    registeredCourses.innerHTML = '';
+                    selectedCourses.forEach(course => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.innerHTML = `
+                            <div class="history-info">
+                                <h5>${course.name}</h5>
+                                <p>${course.code} • ${course.credits} Credits • ${course.instructor}</p>
+                            </div>
+                            <span class="history-grade" style="background: rgba(23, 162, 184, 0.1); color: var(--info); border: 1px solid rgba(23, 162, 184, 0.2);">
+                                Registered
+                            </span>
+                        `;
+                        registeredCourses.appendChild(historyItem);
+                    });
+                    
+                    // Clear selected courses
+                    selectedCourses = [];
+                    updateSelectedCourses();
+                    loadCourses();
+                };
+            }
+        }
+
+        // ===== COURSE HISTORY TABS =====
+        function showHistoryTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.history-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide content
+            document.getElementById('registeredCourses').style.display = tab === 'registered' ? 'grid' : 'none';
+            document.getElementById('completedCourses').style.display = tab === 'completed' ? 'grid' : 'none';
+        }
+
+        // ===== DY2 CREDIT TRANSFER =====
+        function loadTransferTable() {
+            const table = document.getElementById('transferTable');
+            table.innerHTML = '';
+            
+            transferData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                let statusClass = 'status-transfer';
+                let statusText = 'Transferred';
+                
+                row.innerHTML = `
+                    <td>${item.previousSubject}</td>
+                    <td>${item.previousCode}</td>
+                    <td>${item.segiEquivalent}</td>
+                    <td>${item.segiCode}</td>
+                    <td>${item.credits}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                `;
+                
+                table.appendChild(row);
+            });
+        }
+
+        // ===== STUDENT COMPARISON TABS =====
+        function showComparisonTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.comparison-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide content
+            document.getElementById('dy2StudentDetails').style.display = tab === 'dy2' ? 'block' : 'none';
+            document.getElementById('regularStudentDetails').style.display = tab === 'regular' ? 'block' : 'none';
+            document.getElementById('regularProgress').style.display = tab === 'regular' ? 'block' : 'none';
+        }
+
+        // ===== MOBILE NAVIGATION =====
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+
+        function toggleUserMenu() {
+            // For demo purposes, just show an alert
+            showNotification('User menu would open here. Options: Profile, Settings, Logout', 'info');
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadCourses();
+            loadTransferTable();
+            
+            // Set up navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.textContent.trim().toLowerCase().replace(' ', '');
+                    showPage(page);
+                });
+            });
+            
+            // Set up quick action buttons
+            document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.textContent.trim().toLowerCase().replace(' ', '');
+                    if (page === 'aiassistant') {
+                        toggleChatbot();
+                    } else {
+                        showPage(page);
+                    }
+                });
+            });
+            
+            // Set up admin menu items
+            document.querySelectorAll('.admin-menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.admin-menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real application, this would load different admin sections
+                    if (this.textContent.includes('Login')) {
+                        document.querySelector('.admin-content h3').textContent = 'Admin Login / Sign Up';
+                    }
+                });
+            });
+            
+            // Set up search functionality
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const filteredCourses = coursesData.filter(course => 
+                        course.name.toLowerCase().includes(searchTerm) || 
+                        course.code.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    // In a real application, this would filter the course list
+                    console.log('Searching for:', searchTerm);
+                });
+            }
+            
+            // Set up history tabs
+            document.querySelectorAll('.history-tab').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.textContent.toLowerCase().includes('current') ? 'registered' : 'completed';
+                    showHistoryTab(tabId);
+                });
+            });
+            
+            // Set up comparison tabs
+            document.querySelectorAll('.comparison-tab').forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.textContent.toLowerCase().includes('dy2') ? 'dy2' : 'regular';
+                    showComparisonTab(tabId);
+                });
+            });
+            
+            // Set up AI chatbot
+            document.getElementById('chatbotToggle').addEventListener('click', toggleChatbot);
+            document.getElementById('chatbotClose').addEventListener('click', toggleChatbot);
+            document.getElementById('chatbotSend').addEventListener('click', function() {
+                const input = document.getElementById('chatbotInput');
+                if (input.value.trim()) {
+                    askAI(input.value.trim());
+                }
+            });
+            document.getElementById('chatbotInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const input = document.getElementById('chatbotInput');
+                    if (input.value.trim()) {
+                        askAI(input.value.trim());
+                    }
+                }
+            });
+            
+            // Set up quick question buttons in chatbot
+            document.querySelectorAll('.quick-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const question = this.textContent.trim();
+                    askAI(question);
+                });
+            });
+        });
+
+        // ===== UTILITY FUNCTIONS =====
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: var(--shadow-lg);
+                z-index: 2000;
+                animation: slideInRight 0.3s ease-out;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                max-width: 300px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add fadeOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
